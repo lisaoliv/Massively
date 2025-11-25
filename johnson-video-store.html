@@ -1,0 +1,115 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <title>Johnson Video Store Database & SQL Analytics</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+    <link rel="stylesheet" href="assets/css/main.css" />
+    <noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
+  </head>
+  <body class="is-preload">
+    <div id="wrapper">
+
+      <!-- Header -->
+      <header id="header">
+        <a href="index.html" class="logo">Portfolio</a>
+      </header>
+
+      <!-- Main -->
+      <div id="main">
+        <section class="post">
+          <header class="major">
+            <h1>Johnson Video Store<br />
+            Relational Database &amp; SQL Analytics</h1>
+            <p>PostgreSQL data model and queries for a video rental business.</p>
+          </header>
+
+          <h2>Project overview</h2>
+          <p>
+            This project redesigns Johnson Video Store's manual tracking into a normalized PostgreSQL
+            database. The schema supports consistent queries about customers, rentals, inventory,
+            late fees and distributor performance.
+          </p>
+
+          <h2>Role and tools</h2>
+          <ul>
+            <li>Role: Data modeler and SQL developer</li>
+            <li>Tools: PostgreSQL, pgAdmin 4, ERD modeling</li>
+          </ul>
+
+          <h2>Business questions</h2>
+          <ul>
+            <li>Who returns movies late most often and generates late fees</li>
+            <li>What revenue rental and late fees generate over a year</li>
+            <li>Which genres and titles rent most frequently</li>
+            <li>Which distributors supply high performing titles</li>
+            <li>Which customers rent more than 10 movies per year</li>
+          </ul>
+
+          <h2>Data model</h2>
+          <p>
+            I created an ERD with core entities such as <code>movie</code>, <code>customer</code>,
+            <code>rental</code>, <code>dvd</code>, <code>video</code>, <code>distributor</code>
+            and <code>customer_account</code>. Bridge tables connect movies with actors,
+            directors and awards. Surrogate primary keys and foreign keys support one to many
+            and many to many relationships for inventory and rentals.
+          </p>
+
+          <h2>Implementation</h2>
+          <ul>
+            <li>Created DDL scripts to build all tables and constraints in PostgreSQL</li>
+            <li>Seeded at least 20 rows per table with realistic movies, customers and rentals</li>
+            <li>Added indexes and uniqueness constraints for inventory numbers and customer accounts</li>
+          </ul>
+
+          <h2>Analytics queries</h2>
+          <p>Example query: customers with high late returns.</p>
+<pre><code class="sql">
+SELECT c.customer_id,
+       c.customer_name,
+       COUNT(*) AS late_rentals
+FROM rental r
+JOIN customer c
+  ON r.customer_id = c.customer_id
+WHERE r.return_date &gt; r.rental_date + INTERVAL '3 days'
+GROUP BY c.customer_id, c.customer_name
+ORDER BY late_rentals DESC;
+</code></pre>
+
+          <p>Example query: total revenue from rentals and late fees in the last year.</p>
+<pre><code class="sql">
+SELECT DATE_TRUNC('year', r.rental_date) AS rental_year,
+       SUM(rental_fee + late_fee)       AS total_revenue
+FROM rental r
+WHERE r.rental_date &gt;= CURRENT_DATE - INTERVAL '1 year'
+GROUP BY rental_year
+ORDER BY rental_year;
+</code></pre>
+
+          <h2>Outcomes</h2>
+          <p>
+            The database supports consistent reporting on rental activity, revenue and customer
+            behavior. The project demonstrates end to end relational design, SQL implementation
+            and business-focused analytics.
+          </p>
+        </section>
+      </div>
+
+      <!-- Footer -->
+      <footer id="footer">
+        <section>
+          <p>© Lisa Oliveira. Built with the Massively template from HTML5 UP.</p>
+        </section>
+      </footer>
+
+    </div>
+
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/js/jquery.scrollex.min.js"></script>
+    <script src="assets/js/jquery.scrolly.min.js"></script>
+    <script src="assets/js/browser.min.js"></script>
+    <script src="assets/js/breakpoints.min.js"></script>
+    <script src="assets/js/util.js"></script>
+    <script src="assets/js/main.js"></script>
+  </body>
+</html>
